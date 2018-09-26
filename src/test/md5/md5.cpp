@@ -6,6 +6,7 @@
 ********************************************************************/
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <fstream>
 #include <openssl/md5.h>
@@ -19,8 +20,8 @@ using namespace std;
 void Print(unsigned char md[MD5_DIGEST_LENGTH])
 {
     for(int i=0;i<MD5_DIGEST_LENGTH;++i)
-        //cout<<hex<<(int)md[i];
-        printf("%x",md[i]);
+        cout<<hex<<setw(2)<<setfill('0')<<(int)md[i];
+        //printf("%02x",md[i]);
     cout<<endl;
 }
 
@@ -45,7 +46,7 @@ void MD5File(string fileName)
     }
     while(!ifs.eof())
     {
-        memset(buf,0,MD5_DIGEST_LENGTH);
+        memset(buf,0,sizeof(buf));
         ifs.read(buf,BUF_SIZE);
         int len=ifs.gcount();
         if(len)
