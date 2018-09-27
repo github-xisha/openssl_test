@@ -99,8 +99,8 @@ int main(int argc,char* argv[])
     //SHA1File(str);
     //SHA224String(str);
     
-    std::string md=sha1::hash(str);
-    PrintHash((unsigned char*)md.c_str(),md.size());
+    //std::string md=sha1::hash(str);
+    //PrintHash((unsigned char*)md.c_str(),md.size());
     //cout<<md<<endl;
 }
 
