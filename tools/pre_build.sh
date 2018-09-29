@@ -12,7 +12,7 @@ function buildOpenssl(){
     if [ ! -d build ]; then
         mkdir build
     fi
-    ./config --prefix=${project_path}/external/openssl_v1.1.0/build && make && make install
+    ./config --prefix=${project_path}/external/openssl_v1.1.0/build --debug && make && make install
     cd build/lib
     rm -rf pkgconfig engines-1.1
     cp -r ${project_path}/external/openssl_v1.1.0/build/include/openssl ${project_path}/include
