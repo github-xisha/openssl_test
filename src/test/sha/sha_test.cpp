@@ -5,7 +5,7 @@
   > Created Time: 2018年09月27日 星期四 09时44分11秒
 ********************************************************************/
 
-#include "SHA.hpp"
+#include "sha.hpp"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -99,8 +99,8 @@ int main(int argc,char* argv[])
     //SHA1File(str);
     //SHA224String(str);
     
-    //std::string md=sha1::hash(str);
-    //PrintHash((unsigned char*)md.c_str(),md.size());
+    std::string md=sha1::hash(str);
+    PrintHash((unsigned char*)md.c_str(),md.size());
     //cout<<md<<endl;
 }
 

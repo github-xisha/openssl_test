@@ -18,9 +18,9 @@ template<typename State,
          int (*Init)(State*),
          int (*Update)(State*,const void*,size_t),
          int (*Final)(uint8_t*,State*)>
-class SHA{
+class sha{
 public:
-    SHA(){ (*Init)(&s); };
+    sha(){ (*Init)(&s); };
     void update(const char* data,size_t len) { (*Update)(&s,data,len); }
     void final(uint8_t* buf) { (*Final)(buf,&s); }
     std::string final()
@@ -32,7 +32,7 @@ public:
     }
     static std::string hash(const std::string & str)
     {
-        SHA x;
+        sha x;
         x.update(str.data(),str.size());
         return x.final();
     }
@@ -42,10 +42,10 @@ private:
     State s;
 };
 
-typedef SHA<SHA_CTX,    20, 64,  SHA1_Init, SHA1_Update, SHA1_Final> sha1;
-typedef SHA<SHA256_CTX, 28, 64,  SHA224_Init, SHA224_Update, SHA224_Final> sha224;
-typedef SHA<SHA256_CTX, 32, 64,  SHA256_Init, SHA256_Update, SHA256_Final> sha256;
-typedef SHA<SHA512_CTX, 48, 128, SHA384_Init, SHA384_Update, SHA384_Final> sha384;
-typedef SHA<SHA512_CTX, 64, 128, SHA512_Init, SHA512_Update, SHA512_Final> sha512;
+typedef sha<SHA_CTX,    20, 64,  SHA1_Init, SHA1_Update, SHA1_Final> sha1;
+typedef sha<SHA256_CTX, 28, 64,  SHA224_Init, SHA224_Update, SHA224_Final> sha224;
+typedef sha<SHA256_CTX, 32, 64,  SHA256_Init, SHA256_Update, SHA256_Final> sha256;
+typedef sha<SHA512_CTX, 48, 128, SHA384_Init, SHA384_Update, SHA384_Final> sha384;
+typedef sha<SHA512_CTX, 64, 128, SHA512_Init, SHA512_Update, SHA512_Final> sha512;
 
 #endif
