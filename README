@@ -1,10 +1,11 @@
-基于openssl库的测试代码
+常用加密算法的测试代码(基于openssl库)
 一、算法部分
     1、信息摘要类算法
         a、MD5测试程序
         b、SHA测试程序
     2、对称加密算法
-        a、AES(CBC、CFB)
+        a、AES(ECB、CBC、CFB、OFB)
+        b、DES(ECB)
     3、非对称加密算法
 
 二、EVP框架
