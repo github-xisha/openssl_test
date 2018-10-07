@@ -6,6 +6,7 @@
     2、对称加密算法
         a、AES(ECB、CBC、CFB、OFB)
         b、DES(ECB)
+        c、BF(ECB、CFB、OFB)
     3、非对称加密算法
 
 二、EVP框架
