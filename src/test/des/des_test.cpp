@@ -12,6 +12,8 @@
 #include <string.h>    
 #include "openssl/des.h"    
 
+using namespace std;
+
 // 加密 ecb模式    
 std::string DES_ENCRYPT_ECB(const std::string &clearText, const std::string &key)  
 {  
@@ -118,6 +120,105 @@ std::string DES_DECRYPT_ECB(const std::string &cipherText, const std::string &ke
 }  
 
 
+// 加密 cbc模式    
+std::string DES_ENCRYPT_CBC(const std::string &clearText, const std::string &ukey)  
+{
+    std::string cipherText;
+    DES_cblock key,ivec;
+    memset(&key,0,DES_KEY_SZ);
+    memset(&ivec,0,DES_KEY_SZ);
+    if(ukey.size()<8)
+    {
+        memcpy(&key,ukey.c_str(),ukey.size());
+    }else{
+        memcpy(&key,ukey.c_str(),8);
+    }
+    DES_key_schedule ks;
+    DES_set_key_unchecked(&key,&ks);
+    int len=clearText.size()%8?(clearText.size()/8+1)*8:clearText.size();
+    unsigned char* outputText=new unsigned char[len];
+    memset(outputText,0,len);
+    DES_ncbc_encrypt((unsigned char*)clearText.c_str(),outputText,clearText.size(),&ks,&ivec,DES_ENCRYPT);
+    cipherText=(char*)outputText;
+    delete [] outputText;
+    return cipherText;
+}
+
+
+// 解密 cbc模式    
+std::string DES_DECRYPT_CBC(const std::string &cipherText, const std::string &ukey)  
+{
+    std::string clearText;
+    DES_cblock key,ivec;
+    memset(&key,0,DES_KEY_SZ);
+    memset(&ivec,0,DES_KEY_SZ);
+    if(ukey.size()<8)
+    {
+        memcpy(&key,ukey.c_str(),ukey.size());
+    }else{
+        memcpy(&key,ukey.c_str(),8);
+    }
+    DES_key_schedule ks;
+    DES_set_key_unchecked(&key,&ks);
+    int len=cipherText.size()%8?(cipherText.size()/8+1)*8:cipherText.size();
+    unsigned char* outputText=new unsigned char[len];
+    memset(outputText,0,len);
+    DES_ncbc_encrypt((unsigned char*)cipherText.c_str(),outputText,cipherText.size(),&ks,&ivec,DES_DECRYPT);
+    clearText=(char*)outputText;
+    delete [] outputText;
+    return clearText;
+}
+
+// 加密cfb模式
+std::string DES_ENCRYPT_CFB(const string& clearText,const string & ukey)
+{
+    std::string cipherText;
+    DES_cblock key,ivec;
+    memset(&key,0,DES_KEY_SZ);
+    memset(&ivec,0,DES_KEY_SZ);
+    if(ukey.size()<8)
+    {
+        memcpy(&key,ukey.c_str(),ukey.size());
+    }else{
+        memcpy(&key,ukey.c_str(),8);
+    }
+    DES_key_schedule ks;
+    DES_set_key_unchecked(&key,&ks);
+    int len=clearText.size();
+    unsigned char* outputText=new unsigned char[len+1]; //这里需要多申请一块空间,存放结束字符'\0'
+    memset(outputText,0,len+1);
+    DES_cfb_encrypt((unsigned char*)clearText.c_str(),outputText,8,clearText.size(),&ks,&ivec,DES_ENCRYPT);
+    cipherText=(char*)outputText;
+    delete [] outputText;
+    return cipherText;
+}
+
+
+// 解密 cfb模式    
+std::string DES_DECRYPT_CFB(const std::string &cipherText, const std::string &ukey)  
+{
+    std::string clearText;
+    DES_cblock key,ivec;
+    memset(&key,0,DES_KEY_SZ);
+    memset(&ivec,0,DES_KEY_SZ);
+    if(ukey.size()<8)
+    {
+        memcpy(&key,ukey.c_str(),ukey.size());
+    }else{
+        memcpy(&key,ukey.c_str(),8);
+    }
+    DES_key_schedule ks;
+    DES_set_key_unchecked(&key,&ks);
+    int len= cipherText.size();
+    unsigned char* outputText=new unsigned char[len+1];
+    memset(outputText,0,len+1);
+    DES_cfb_encrypt((unsigned char*)cipherText.c_str(),outputText,8,cipherText.size(),&ks,&ivec,DES_DECRYPT);
+    clearText=(char*)outputText;
+    delete [] outputText;
+    return clearText;
+}
+
+
 int main(int argc,char* argv[])
 {
     if(2!=argc)
@@ -126,12 +227,17 @@ int main(int argc,char* argv[])
         return -1;
     }
     std::string srcText(argv[1]);
+    std::cout<<"srcText size="<<srcText.size()<<std::endl;
     std::string desKey = "12345";  
-    std::string encryptText = DES_ENCRYPT_ECB(srcText, desKey);  
-    std::cout << "加密字符： " << std::endl;  
-    std::cout << encryptText << std::endl;  
-    std::string decryptText = DES_DECRYPT_ECB(encryptText, desKey);  
-    std::cout << "解密字符： " << std::endl;  
-    std::cout << decryptText << std::endl; 
+    //std::string encryptText = DES_ENCRYPT_ECB(srcText, desKey);  
+    //std::string encryptText = DES_ENCRYPT_CBC(srcText, desKey);  
+    std::string encryptText = DES_ENCRYPT_CFB(srcText, desKey);  
+    std::cout<<"encryptText size="<<encryptText.size()<<std::endl;
+    std::cout << "encryptText:"<<encryptText << std::endl;  
+    //std::string decryptText = DES_DECRYPT_ECB(encryptText, desKey);  
+    //std::string decryptText = DES_DECRYPT_CBC(encryptText, desKey);  
+    std::string decryptText = DES_DECRYPT_CFB(encryptText, desKey);  
+    std::cout << "srcText    :"<<srcText << std::endl; 
+    std::cout << "decryptText:"<<decryptText << std::endl; 
 }
 
