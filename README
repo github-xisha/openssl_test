@@ -5,7 +5,7 @@
         b、SHA测试程序
     2、对称加密算法
         a、AES(ECB、CBC、CFB、OFB)
-        b、DES(ECB)
+        b、DES(ECB、CBC、CFB、OFB)
         c、BF(CBC、CFB、OFB)
     3、非对称加密算法
 
