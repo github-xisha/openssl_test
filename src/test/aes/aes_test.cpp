@@ -13,9 +13,9 @@
 using namespace std;
 
 enum UKeyBits{
-    aes_128_cbc=128,
-    aes_192_cbc=192,
-    aes_256_cbc=256
+    aes_128_bits=128,
+    aes_192_bits=192,
+    aes_256_bits=256
 };
 
 void Print(unsigned char* text,int len)
@@ -36,9 +36,9 @@ void Print(unsigned char* text,int len)
 
 void AES_ECB(string plain)
 {
-    //enum UKeyBits ukeybits=aes_128_cbc;
-    //enum UKeyBits ukeybits=aes_192_cbc;
-    enum UKeyBits ukeybits=aes_256_cbc;
+    //enum UKeyBits ukeybits=aes_128_bits;
+    //enum UKeyBits ukeybits=aes_192_bits;
+    enum UKeyBits ukeybits=aes_256_bits;
     unsigned char ukey[ukeybits/8];
     unsigned char* plain_text=NULL;
     unsigned char* enc_text=NULL;
@@ -99,9 +99,9 @@ void AES_ECB(string plain)
  */
 void AES_CBC(string plain_text)
 {
-    //enum UKeyBits ukeybits=aes_128_cbc;
-    //enum UKeyBits ukeybits=aes_192_cbc;
-    enum UKeyBits ukeybits=aes_256_cbc;
+    //enum UKeyBits ukeybits=aes_128_bits;
+    //enum UKeyBits ukeybits=aes_192_bits;
+    enum UKeyBits ukeybits=aes_256_bits;
     unsigned char ukey[ukeybits/8];
     unsigned char ivec[AES_BLOCK_SIZE];
     unsigned char* enc_text=NULL;
@@ -158,9 +158,9 @@ void AES_CBC(string plain_text)
  */
 void AES_CFB128(string plain_text)
 {
-    //enum UKeyBits ukeybits=aes_128_cbc;
-    //enum UKeyBits ukeybits=aes_192_cbc;
-    enum UKeyBits ukeybits=aes_256_cbc;
+    //enum UKeyBits ukeybits=aes_128_bits;
+    //enum UKeyBits ukeybits=aes_192_bits;
+    enum UKeyBits ukeybits=aes_256_bits;
     unsigned char ukey[ukeybits/8];
     unsigned char ivec[AES_BLOCK_SIZE];
     unsigned char* enc_text=NULL;
@@ -168,8 +168,8 @@ void AES_CFB128(string plain_text)
     AES_KEY key;
     int len=0;
     len=plain_text.size();
-    enc_text=(unsigned char*)calloc(1,len);
-    dec_text=(unsigned char*)calloc(1,len);
+    enc_text=(unsigned char*)calloc(1,len+1);
+    dec_text=(unsigned char*)calloc(1,len+1);
     cout<<"ukey:";
     for(int i=0;i<ukeybits/8;++i)
     {
@@ -204,10 +204,17 @@ void AES_CFB128(string plain_text)
     dec_text=NULL;
 }
 
-//暂未测试通过！！！
+/*
+ * 函数：AES_cfb1_encrypt()
+ * 参数：in    长度任意
+ *       out   长度和in保持一致
+ *       key   由128位、192位和256位的ukey生成
+ *       ivec  128位
+ */
 void AES_CFB1(string plain_text)
 {
-    enum UKeyBits ukeybits=aes_128_cbc;
+    cout<<"AES_CFB1"<<endl;
+    enum UKeyBits ukeybits=aes_128_bits;
     unsigned char ukey[ukeybits/8];
     unsigned char ivec[AES_BLOCK_SIZE];
     unsigned char* enc_text=NULL;
@@ -215,8 +222,9 @@ void AES_CFB1(string plain_text)
     AES_KEY key;
     int len=0;
     len=plain_text.size();
-    enc_text=(unsigned char*)calloc(1,len);
-    dec_text=(unsigned char*)calloc(1,len);
+    cout<<"plain_text size:"<<plain_text.size()<<endl;
+    enc_text=(unsigned char*)calloc(1,len+1);
+    dec_text=(unsigned char*)calloc(1,len+1);
     cout<<"ukey:";
     for(int i=0;i<ukeybits/8;++i)
     {
@@ -234,14 +242,69 @@ void AES_CFB1(string plain_text)
     //memset(ivec,0,sizeof(ivec));
     AES_set_encrypt_key(ukey,ukeybits,&key);
     int num=0;
-    AES_cfb1_encrypt((unsigned char*)plain_text.data(),enc_text,plain_text.size(),&key,ivec,&num,AES_ENCRYPT);
+    AES_cfb1_encrypt((unsigned char*)plain_text.data(),enc_text,8*plain_text.size(),&key,ivec,&num,AES_ENCRYPT);
     //memset(ivec,0,sizeof(ivec));
     for(int i=0;i<AES_BLOCK_SIZE;++i)
     {
         ivec[i]=65+i;
     }
     num=0;
-    AES_cfb1_encrypt(enc_text,dec_text,len,&key,ivec,&num,AES_DECRYPT);
+    AES_cfb1_encrypt(enc_text,dec_text,8*len,&key,ivec,&num,AES_DECRYPT);
+    cout<<"dec_text:"<<dec_text<<endl;
+    free(enc_text);
+    free(dec_text);
+    enc_text=NULL;
+    dec_text=NULL;
+}
+
+/*
+ * 函数：AES_cfb8_encrypt()
+ * 参数：in    长度任意
+ *       out   长度和in保持一致
+ *       key   由128位、192位和256位的ukey生成
+ *       ivec  128位
+ */
+void AES_CFB8(string plain_text)
+{
+    cout<<"AES_CFB8"<<endl;
+    enum UKeyBits ukeybits=aes_128_bits;
+    unsigned char ukey[ukeybits/8];
+    unsigned char ivec[AES_BLOCK_SIZE];
+    unsigned char* enc_text=NULL;
+    unsigned char* dec_text=NULL;
+    AES_KEY key;
+    int len=0;
+    len=plain_text.size();
+    enc_text=(unsigned char*)calloc(1,len+1);
+    dec_text=(unsigned char*)calloc(1,len+1);
+    cout<<"ukey:";
+    for(int i=0;i<ukeybits/8;++i)
+    {
+        ukey[i]=65+i;
+        printf("%c",ukey[i]);
+    }
+    cout<<endl;
+    cout<<"ivec:";
+    for(int i=0;i<AES_BLOCK_SIZE;++i)
+    {
+        ivec[i]=65+i;
+        printf("%c",ivec[i]);
+    }
+    cout<<endl;
+    //memset(ivec,0,sizeof(ivec));
+    AES_set_encrypt_key(ukey,ukeybits,&key);
+    int num=0;
+    AES_cfb8_encrypt((unsigned char*)plain_text.data(),enc_text,plain_text.size(),&key,ivec,&num,AES_ENCRYPT);
+    //cout<<"plain_text size:"<<plain_text.size()<<endl;
+    //cout<<"enc_text size:"<<strlen((const char*)enc_text)<<endl;
+    //cout<<"enc_text:"<<enc_text<<endl;
+    //memset(ivec,0,sizeof(ivec));
+    for(int i=0;i<AES_BLOCK_SIZE;++i)
+    {
+        ivec[i]=65+i;
+    }
+    num=0;
+    AES_cfb8_encrypt(enc_text,dec_text,len,&key,ivec,&num,AES_DECRYPT);
     cout<<"dec_text:"<<dec_text<<endl;
     free(enc_text);
     free(dec_text);
@@ -258,9 +321,9 @@ void AES_CFB1(string plain_text)
  */
 void AES_OFB128(string plain_text)
 {
-    //enum UKeyBits ukeybits=aes_128_cbc;
-    //enum UKeyBits ukeybits=aes_192_cbc;
-    enum UKeyBits ukeybits=aes_256_cbc;
+    //enum UKeyBits ukeybits=aes_128_bits;
+    //enum UKeyBits ukeybits=aes_192_bits;
+    enum UKeyBits ukeybits=aes_256_bits;
     unsigned char ukey[ukeybits/8];
     unsigned char ivec[AES_BLOCK_SIZE];
     unsigned char* enc_text=NULL;
@@ -268,8 +331,8 @@ void AES_OFB128(string plain_text)
     AES_KEY key;
     int len=0;
     len=plain_text.size();
-    enc_text=(unsigned char*)calloc(1,len);
-    dec_text=(unsigned char*)calloc(1,len);
+    enc_text=(unsigned char*)calloc(1,len+1);
+    dec_text=(unsigned char*)calloc(1,len+1);
     cout<<"ukey:";
     for(int i=0;i<ukeybits/8;++i)
     {
@@ -312,8 +375,9 @@ int main(int argc,char* argv[])
     //AES_ECB(argv[1]);
     //AES_CBC(argv[1]);
     //AES_CFB128(argv[1]);
-    AES_CFB1(argv[1]);
-    //AES_OFB128(argv[1]);
+    //AES_CFB1(argv[1]);
+    //AES_CFB8(argv[1]);
+    AES_OFB128(argv[1]);
 }
 
 
