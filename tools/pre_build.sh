@@ -16,7 +16,7 @@ function buildOpenssl(){
     cd build/lib
     rm -rf pkgconfig engines-1.1
     cp -r ${project_path}/external/openssl_v1.1.0/build/include/openssl ${project_path}/include
-    cp -r ${project_path}/external/openssl_v1.1.0/build/lib/* ${project_path}/lib
+    cp -a ${project_path}/external/openssl_v1.1.0/build/lib ${project_path}/lib
 }
 
 buildOpenssl
